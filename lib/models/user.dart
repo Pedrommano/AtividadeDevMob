@@ -1,12 +1,36 @@
-import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
+class Usuario {
+  final String? id;
+  final String nome;
+  final String email;
+  final DateTime dataNascimento;
+  final List<String> interesses;
 
-@JsonSerializable()
-class User {
-  User(this.name, this.email);
-  String name;
-  String email;
+  Usuario({
+    this.id,
+    required this.nome,
+    required this.email,
+    required this.dataNascimento,
+    this.interesses = const [],
+  });
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  // Converte o modelo para Map (para Firebase)
+  Map<String, dynamic> toMap() {
+    return {
+      'nome': nome,
+      'email': email,
+      'dataNascimento': dataNascimento,
+      'interesses': interesses,
+    };
+  }
+
+  // Cria modelo a partir de Map (do Firebase)
+  factory Usuario.fromMap(String id, Map<String, dynamic> map) {
+    return Usuario(
+      id: id,
+      nome: map['nome'] ?? '',
+      email: map['email'] ?? '',
+      dataNascimento: (map['dataNascimento'] as Timestamp).toDate(),
+      interesses: List<String>.from(map['interesses'] ?? []),
+    );
+  }
 }
